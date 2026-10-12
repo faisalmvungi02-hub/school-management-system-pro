@@ -5,43 +5,12 @@ import { CSSProperties, useEffect, useMemo, useState } from "react";
 import {
   backgroundCatalog,
   defaultPreferences,
+  fetchPreferencesFromServer,
   getStoredPreferences,
+  persistPreferences,
   presetCatalog,
   type DashboardPreferences,
 } from "@/lib/preferences";
-
-const studentData = {
-  classes: [
-    { code: "ENG-210", title: "Engineering Design Studio", room: "A-14", time: "08:30 - 10:00" },
-    { code: "MAT-201", title: "Materials and Structures", room: "B-04", time: "10:15 - 11:45" },
-    { code: "ELE-180", title: "Digital Systems", room: "C-10", time: "12:30 - 14:00" },
-    { code: "RES-101", title: "Research Methods", room: "D-02", time: "15:00 - 16:30" },
-  ],
-  assignments: [
-    { title: "Bridge Load Analysis Draft", due: "2026-03-05", status: "In progress", link: "/assignments/bridge-load-analysis" },
-    { title: "Circuit Lab Reflection", due: "2026-03-06", status: "Needs review", link: "/assignments/circuit-lab-reflection" },
-    { title: "Material Properties Portfolio", due: "2026-03-08", status: "Submitted", link: "/assignments/material-properties-portfolio" },
-  ],
-  assessments: [
-    { title: "Structural Systems Quiz", date: "2026-03-07" },
-    { title: "Digital Systems Lab Test", date: "2026-03-10" },
-  ],
-  results: [
-    { subject: "Engineering Design Studio", grade: "A-", date: "2026-02-18" },
-    { subject: "Materials and Structures", grade: "B+", date: "2026-02-25" },
-    { subject: "Digital Systems", grade: "A", date: "2026-03-03" },
-  ],
-  timetable: [
-    { day: "Monday", slot: "08:30 - 10:00", title: "Engineering Design Studio" },
-    { day: "Monday", slot: "10:15 - 11:45", title: "Materials and Structures" },
-    { day: "Tuesday", slot: "12:30 - 14:00", title: "Digital Systems" },
-    { day: "Wednesday", slot: "15:00 - 16:30", title: "Research Methods" },
-  ],
-  announcements: [
-    { title: "Library access update", body: "The engineering library remains open until 18:00 for project review and model preparation.", date: "2026-03-02" },
-    { title: "Lab safety briefing", body: "All students must sign the digital safety checklist before the workshop session on Thursday.", date: "2026-03-03" },
-  ],
-};
 
 function formatDate(dateString: string) {
   const date = new Date(dateString);
@@ -59,8 +28,21 @@ export default function StudentDashboardPage() {
   const [prefs, setPrefs] = useState<DashboardPreferences>(defaultPreferences);
 
   useEffect(() => {
-    const stored = getStoredPreferences();
-    setPrefs(stored);
+    let mounted = true;
+    (async () => {
+      const server = await fetchPreferencesFromServer();
+      if (server && mounted) {
+        setPrefs(server);
+        persistPreferences(server);
+        return;
+      }
+
+      const stored = getStoredPreferences();
+      if (mounted) setPrefs(stored);
+    })();
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const selectedBackground = useMemo(
@@ -81,16 +63,15 @@ export default function StudentDashboardPage() {
     ["--glass-shadow" as any]: selectedPreset.shadow,
   } as CSSProperties;
 
+  // NOTE: This component currently shows limited data until an authentication system is integrated.
+  // It reads preferences from the server when available and falls back to localStorage.
+
   return (
     <div className="dashboard-app" style={shellStyle}>
       <div className="dashboard-shell">
         <aside className="sidebar glass-panel">
           <div className="brand-row">
-            <div className="brand-mark">P</div>
-            <div>
-              <div className="brand-title">PLUS OS</div>
-              <div className="brand-subtitle">Student</div>
-            </div>
+            <img src="/assets/logo.png" alt="PLUS OS" style={{ width: 120, height: 'auto', objectFit: 'contain' }} />
           </div>
 
           <nav aria-label="Student navigation" className="nav-stack">
@@ -159,18 +140,45 @@ export default function StudentDashboardPage() {
                 </div>
               </div>
               <div className="stack-list">
-                {studentData.assignments.map((item) => (
-                  <div key={item.title} className="row-item assignment-row">
-                    <div>
-                      <div className="label-row">
-                        <strong>{item.title}</strong>
-                        <span className={`status-chip ${item.status.toLowerCase().replace(/\s+/g, "-")}`}>{item.status}</span>
-                      </div>
-                      <div className="meta-row">Due {formatDate(item.due)}</div>
+                {/* Real assignment data should come from a protected API; remove hardcoded data when hooked up. */}
+                <div className="row-item assignment-row">
+                  <div>
+                    <div className="label-row">
+                      <strong>Bridge Load Analysis Draft</strong>
+                      <span className={`status-chip`}>In progress</span>
                     </div>
-                    <Link href={item.link} className="text-link">Open</Link>
+                    <div className="meta-row">Due 2026-03-05</div>
                   </div>
-                ))}
+                  <Link href="/assignments/bridge-load-analysis" className="text-link">
+                    Open
+                  </Link>
+                </div>
+
+                <div className="row-item assignment-row">
+                  <div>
+                    <div className="label-row">
+                      <strong>Circuit Lab Reflection</strong>
+                      <span className={`status-chip`}>Needs review</span>
+                    </div>
+                    <div className="meta-row">Due 2026-03-06</div>
+                  </div>
+                  <Link href="/assignments/circuit-lab-reflection" className="text-link">
+                    Open
+                  </Link>
+                </div>
+
+                <div className="row-item assignment-row">
+                  <div>
+                    <div className="label-row">
+                      <strong>Material Properties Portfolio</strong>
+                      <span className={`status-chip`}>Submitted</span>
+                    </div>
+                    <div className="meta-row">Due 2026-03-08</div>
+                  </div>
+                  <Link href="/assignments/material-properties-portfolio" className="text-link">
+                    Open
+                  </Link>
+                </div>
               </div>
             </article>
 
@@ -182,16 +190,30 @@ export default function StudentDashboardPage() {
                 </div>
               </div>
               <div className="stack-list compact-list">
-                {studentData.timetable.map((item, idx) => (
-                  <div key={`${item.day}-${item.slot}`} className="row-item timetable-row">
-                    <div className="time-block">{item.slot}</div>
-                    <div>
-                      <strong>{item.title}</strong>
-                      <div className="meta-row">{item.day}</div>
-                    </div>
-                    {idx === 0 && <span className="live-badge">Live</span>}
+                <div className="row-item timetable-row">
+                  <div className="time-block">08:30 - 10:00</div>
+                  <div>
+                    <strong>Engineering Design Studio</strong>
+                    <div className="meta-row">Monday</div>
                   </div>
-                ))}
+                  <span className="live-badge">Live</span>
+                </div>
+
+                <div className="row-item timetable-row">
+                  <div className="time-block">10:15 - 11:45</div>
+                  <div>
+                    <strong>Materials and Structures</strong>
+                    <div className="meta-row">Monday</div>
+                  </div>
+                </div>
+
+                <div className="row-item timetable-row">
+                  <div className="time-block">12:30 - 14:00</div>
+                  <div>
+                    <strong>Digital Systems</strong>
+                    <div className="meta-row">Tuesday</div>
+                  </div>
+                </div>
               </div>
             </article>
 
@@ -203,15 +225,29 @@ export default function StudentDashboardPage() {
                 </div>
               </div>
               <div className="stack-list compact-list">
-                {studentData.results.map((item) => (
-                  <div key={item.subject} className="result-row row-item">
-                    <div>
-                      <strong>{item.subject}</strong>
-                      <div className="meta-row">{formatDate(item.date)}</div>
-                    </div>
-                    <span className="grade-pill">{item.grade}</span>
+                <div className="result-row row-item">
+                  <div>
+                    <strong>Engineering Design Studio</strong>
+                    <div className="meta-row">Feb 18, 2026</div>
                   </div>
-                ))}
+                  <span className="grade-pill">A-</span>
+                </div>
+
+                <div className="result-row row-item">
+                  <div>
+                    <strong>Materials and Structures</strong>
+                    <div className="meta-row">Feb 25, 2026</div>
+                  </div>
+                  <span className="grade-pill">B+</span>
+                </div>
+
+                <div className="result-row row-item">
+                  <div>
+                    <strong>Digital Systems</strong>
+                    <div className="meta-row">Mar 03, 2026</div>
+                  </div>
+                  <span className="grade-pill">A</span>
+                </div>
               </div>
             </article>
 
@@ -223,15 +259,21 @@ export default function StudentDashboardPage() {
                 </div>
               </div>
               <div className="stack-list">
-                {studentData.announcements.map((item) => (
-                  <div key={item.title} className="announcement-item row-item">
-                    <div className="announcement-head">
-                      <strong>{item.title}</strong>
-                      <span className="meta-row">{formatDate(item.date)}</span>
-                    </div>
-                    <p>{item.body}</p>
+                <div className="announcement-item row-item">
+                  <div className="announcement-head">
+                    <strong>Library access update</strong>
+                    <span className="meta-row">Mar 02, 2026</span>
                   </div>
-                ))}
+                  <p>The engineering library remains open until 18:00 for project review and model preparation.</p>
+                </div>
+
+                <div className="announcement-item row-item">
+                  <div className="announcement-head">
+                    <strong>Lab safety briefing</strong>
+                    <span className="meta-row">Mar 03, 2026</span>
+                  </div>
+                  <p>All students must sign the digital safety checklist before the workshop session on Thursday.</p>
+                </div>
               </div>
             </article>
           </section>
