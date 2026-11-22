@@ -1,7 +1,9 @@
 "use client";
 
-import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import type { CSSProperties, FormEvent } from "react";
+import { createClient } from "@supabase/supabase-js";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 type Status = { selcom: boolean; snippe: boolean };
 type CredentialKey =
@@ -21,7 +23,7 @@ const fields: { key: CredentialKey; label: string; provider: "selcom" | "snippe"
   { key: "snippe_webhook_secret", label: "Webhook Signing Secret", provider: "snippe", hint: "Snippe Dashboard → Settings → Webhook Secret", secret: true },
 ];
 
-const inputStyle: React.CSSProperties = {
+const inputStyle: CSSProperties = {
   width: "100%", boxSizing: "border-box", border: "1px solid #3c3c3c", borderRadius: 10,
   padding: "13px 14px", background: "rgba(255,255,255,.035)", color: "#f5f5f5",
   outline: "none", fontSize: 14,
