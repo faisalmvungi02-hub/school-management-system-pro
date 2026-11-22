@@ -20,12 +20,14 @@ export default function RegisterPage() {
     try{
       if(password.length<10)throw new Error("Password iwe na angalau herufi 10.");
       if(password!==confirmPassword)throw new Error("Password ulizoweka hazifanani.");
+      const invitationToken=window.location.hash.startsWith("#")?decodeURIComponent(window.location.hash.slice(1)):"";
+      const confirmationPath=invitationToken.length>=32?"/school/invitations/accept#"+encodeURIComponent(invitationToken):"/auth/confirmed";
       const {data,error:signUpError}=await getSupabaseBrowserClient().auth.signUp({
         email:email.trim().toLowerCase(),password,
-        options:{data:{full_name:fullName.trim()},emailRedirectTo:window.location.origin+"/auth/confirmed"},
+        options:{data:{full_name:fullName.trim()},emailRedirectTo:window.location.origin+confirmationPath},
       });
       if(signUpError)throw signUpError;
-      if(data.session&&data.user){router.replace("/workspace");router.refresh();return;}
+      if(data.session&&data.user){router.replace(invitationToken.length>=32?"/school/invitations/accept#"+encodeURIComponent(invitationToken):"/workspace");router.refresh();return;}
       setMessage("Akaunti imepokelewa. Fungua email yako na uthibitishe anuani kabla ya kuingia. Angalia pia Spam/Junk.");
     }catch(cause){setError(cause instanceof Error?cause.message:"Imeshindikana kutengeneza akaunti.");}
     finally{setBusy(false);}
