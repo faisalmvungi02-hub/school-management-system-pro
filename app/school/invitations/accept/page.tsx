@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties, FormEvent } from "react";
 import Link from "next/link";
 import { createClient } from "@supabase/supabase-js";
@@ -18,6 +18,11 @@ export default function AcceptSchoolInvitationPage() {
   const [busy,setBusy]=useState(false);
   const [message,setMessage]=useState("");
   const [error,setError]=useState("");
+
+  useEffect(() => {
+    const incomingToken = new URLSearchParams(window.location.search).get("token");
+    if (incomingToken) setToken(incomingToken);
+  }, []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setBusy(true); setError(""); setMessage("");
