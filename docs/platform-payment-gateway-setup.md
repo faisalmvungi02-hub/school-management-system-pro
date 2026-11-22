@@ -16,10 +16,12 @@ Never put the Supabase service-role key in any `NEXT_PUBLIC_*` variable or brows
 ## Authorize the first Platform Administrator
 The Edge Function verifies the signed-in user's server-controlled Auth `app_metadata.platform_admin` claim. It does not trust user-editable `user_metadata`.
 
-After the intended Platform Administrator has registered and signed in at least once:
+There is currently no Auth user in this Supabase project, so the initial Platform Administrator account must be created first:
 
 1. Open Supabase Dashboard → Authentication → Users.
-2. Select the exact intended administrator account.
+2. Choose **Add user** and create the account with the owner's intended email and a strong password (or send an invite).
+3. Open the newly created user record.
+4. Edit **App Metadata** (not User Metadata).
 3. Edit **App Metadata** (not User Metadata).
 4. Add the boolean claim `platform_admin: true`.
 5. Save, then sign out and sign in again to refresh the access token.
