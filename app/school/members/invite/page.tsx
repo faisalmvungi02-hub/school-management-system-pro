@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties, FormEvent } from "react";
 import Link from "next/link";
 import { createClient, type User } from "@supabase/supabase-js";
@@ -41,6 +41,30 @@ export default function InviteSchoolMemberPage() {
     if(schoolRows.length)setSchoolId(schoolRows[0].school_id);
     if(roleRows.length)setRoleCode(roleRows.find(r=>r.code==="teacher")?.code??roleRows[0].code);
   }
+
+  useEffect(() => {
+    let active = true;
+    if (supabase) void supabase.auth.getUser().then(async ({ data, error: authError }) => {
+      if (!active || authError || !data.user) return;
+      setUser(data.user);
+      try {
+        const [membershipResult, roleResult] = await Promise.all([
+          supabase.from("school_memberships").select("school_id,schools(name,slug)").eq("user_id", data.user.id).eq("status", "active"),
+          supabase.from("roles").select("code,name").order("name")
+        ]);
+        if (membershipResult.error) throw membershipResult.error;
+        if (roleResult.error) throw roleResult.error;
+        if (active) {
+          const schoolRows = (membershipResult.data ?? []) as unknown as SchoolMembership[];
+          const roleRows = (roleResult.data ?? []) as Role[];
+          setSchools(schoolRows); setRoles(roleRows);
+          if (schoolRows.length) setSchoolId(schoolRows[0].school_id);
+          if (roleRows.length) setRoleCode(roleRows.find(r => r.code === "teacher")?.code ?? roleRows[0].code);
+        }
+      } catch (cause) { if (active) setError(cause instanceof Error ? cause.message : "Imeshindwa kupakia taarifa za shule."); }
+    });
+    return () => { active = false; };
+  }, [supabase]);
 
   async function signIn(event:FormEvent<HTMLFormElement>) {
     event.preventDefault();setBusy(true);setError("");setMessage("");
