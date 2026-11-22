@@ -20,7 +20,6 @@ export default function SchoolOnboardingPage() {
   const [user, setUser] = useState<User | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
   const [schoolName, setSchoolName] = useState("");
   const [slug, setSlug] = useState("");
   const [memberships, setMemberships] = useState<Membership[]>([]);
