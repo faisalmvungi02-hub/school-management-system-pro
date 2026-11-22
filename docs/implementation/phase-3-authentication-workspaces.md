@@ -4,10 +4,11 @@
 
 - One Supabase Auth identity flow for every school and district user.
 - /login authenticates with email/password.
-- /register creates an Auth identity and sends email confirmation. The user cannot select their own school role.
+- /register creates an Auth identity and sends email confirmation. The user cannot select their own school role. When registration starts from an invitation link, the invitation token is preserved through email verification so the new account can complete acceptance.
 - /forgot-password and /auth/reset-password implement password recovery.
 - /auth/confirmed checks whether a session is available after email verification.
 - /workspace verifies the signed-in user through Supabase Auth, then reads active school memberships, district memberships, assigned roles and permission codes through the user's RLS-scoped client.
+- Platform administrators are routed using the server-managed app_metadata.platform_admin claim, separate from school roles.
 - The workspace does not grant access based on a role name or browser-supplied user ID. Memberships and role assignments come from the database.
 - The old static student dashboard is preserved at /preview/student; the public root route now provides the unified entry point.
 
