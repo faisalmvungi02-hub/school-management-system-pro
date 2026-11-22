@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { CSSProperties, useEffect, useState } from "react";
+import { CSSProperties, useEffect, useState, useSyncExternalStore } from "react";
 import {
   backgroundCatalog,
   defaultPreferences,
@@ -11,15 +11,31 @@ import {
   type DashboardPreferences,
 } from "@/lib/preferences";
 
-export default function StudentSettingsPage() {
-  const [preferences, setPreferences] = useState<DashboardPreferences>(defaultPreferences);
-  const [draft, setDraft] = useState<DashboardPreferences>(defaultPreferences);
+type DashboardStyle = CSSProperties & { [key: `--${string}`]: string | number | undefined };
 
-  useEffect(() => {
-    const stored = getStoredPreferences();
-    setPreferences(stored);
-    setDraft(stored);
-  }, []);
+function subscribeHydration(onStoreChange: () => void) {
+  if (typeof window === "undefined") return () => undefined;
+  const frame = window.requestAnimationFrame(onStoreChange);
+  return () => window.cancelAnimationFrame(frame);
+}
+
+export default function StudentSettingsPage() {
+  const hydrated = useSyncExternalStore(
+    subscribeHydration,
+    () => true,
+    () => false
+  );
+
+  if (!hydrated) {
+    return <main className="dashboard-app" aria-busy="true" aria-label="Loading settings" />;
+  }
+
+  return <StudentSettingsEditor />;
+}
+
+function StudentSettingsEditor() {
+  const [preferences, setPreferences] = useState<DashboardPreferences>(() => getStoredPreferences());
+  const [draft, setDraft] = useState<DashboardPreferences>(() => getStoredPreferences());
 
   const selectedBackground = backgroundCatalog.find((background) => background.id === draft.backgroundId) ?? backgroundCatalog[0];
   const selectedPreset = presetCatalog.find((preset) => preset.id === draft.glassPreset) ?? presetCatalog[0];
@@ -49,13 +65,13 @@ export default function StudentSettingsPage() {
     setDraft(preferences);
   };
 
-  const previewStyle = {
-    ["--dashboard-bg-image" as any]: `url(${selectedBackground.url})`,
-    ["--glass-opacity" as any]: selectedPreset.opacity,
-    ["--glass-blur" as any]: selectedPreset.blur,
-    ["--glass-border" as any]: selectedPreset.border,
-    ["--glass-shadow" as any]: selectedPreset.shadow,
-  } as CSSProperties;
+  const previewStyle: DashboardStyle = {
+    "--dashboard-bg-image": `url(${selectedBackground.url})`,
+    "--glass-opacity": selectedPreset.opacity,
+    "--glass-blur": selectedPreset.blur,
+    "--glass-border": selectedPreset.border,
+    "--glass-shadow": selectedPreset.shadow,
+  };
 
   return (
     <div className="settings-page dashboard-app settings-preview-mode" style={previewStyle}>
@@ -111,7 +127,12 @@ export default function StudentSettingsPage() {
                     onClick={() => setDraft((current) => ({ ...current, backgroundId: background.id }))}
                     aria-pressed={draft.backgroundId === background.id}
                   >
-                    <img src={background.url} alt={background.label} loading="lazy" />
+                    <span
+                      className="theme-card-preview"
+                      role="img"
+                      aria-label={background.label}
+                      style={{ backgroundImage: `url(${background.url})` }}
+                    />
                     <span>{background.label}</span>
                   </button>
                 ))}
