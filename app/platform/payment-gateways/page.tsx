@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { CSSProperties, FormEvent } from "react";
 import { createClient } from "@supabase/supabase-js";
@@ -182,7 +184,7 @@ export default function PlatformPaymentGatewaysPage() {
   return (
     <main style={{ minHeight: "100vh", background: "#101010", color: "#f7f7f7", padding: "clamp(20px,4vw,54px)", fontFamily: "Arial, sans-serif" }}>
       <div style={{ maxWidth: 1060, margin: "0 auto" }}>
-        <a href="/" style={{ color: "#aaa", textDecoration: "none", fontSize: 13 }}>← PLUS OS</a>
+        <Link href="/" style={{ color: "#aaa", textDecoration: "none", fontSize: 13 }}>← PLUS OS</Link>
         <header style={{ margin: "28px 0 26px" }}>
           <div style={{ color: "#aaa", letterSpacing: 2, fontSize: 11, textTransform: "uppercase" }}>Platform administration</div>
           <h1 style={{ fontSize: "clamp(28px,4vw,42px)", margin: "10px 0", letterSpacing: "-1.2px" }}>Payment gateway credentials</h1>
