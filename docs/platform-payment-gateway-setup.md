@@ -34,6 +34,19 @@ Only an operator with Supabase project Auth administration access should grant t
 
 The screen accepts partial updates: blank fields are left unchanged. Values are written through the server-side Edge Function into Supabase Vault. The browser receives readiness booleans only, never the stored values.
 
+## Test connection
+
+Each provider card includes a **Test connection** action. It sends a read-only API request; it does not initiate a customer payment, create an order, or send a USSD push.
+
+- Selcom: signs and calls `GET /v1/checkout/order-status` with a dedicated non-payment test order ID. This checks API authentication and endpoint access. It does not create or charge an order, and it does not prove settlement readiness.
+- Snippe: calls `GET /v1/payments?limit=1&offset=0`. The API key must have the `collection:read` scope. This checks API authentication only. The Webhook Signing Secret is stored securely but cannot be proven against the provider using this read-only request.
+
+A successful connection test is not a live-payment certification. Confirm the callback/webhook URL in each provider dashboard and perform a controlled test transaction before turning the gateway on for schools.
+
+Provider references:
+- Selcom authentication and order status: https://developers.selcommobile.com/
+- Snippe authentication and payment endpoints: https://docs.snippe.sh/docs/2026-01-25/authentication and https://docs.snippe.sh/docs/2026-01-25/payments
+
 ## Readiness
 A gateway is marked configured only when all required values are present. This status is not proof of a successful live merchant transaction. Complete provider-side callback/webhook configuration and run a controlled test payment before enabling a gateway for schools.
 
