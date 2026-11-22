@@ -13,9 +13,13 @@ export default function ResetPasswordPage(){
   const [error,setError]=useState("");
   useEffect(()=>{
     let active=true;
-    try{void getSupabaseBrowserClient().auth.getUser().then(({data,error:authError})=>{
-      if(active){setReady(Boolean(data.user));if(authError)setError("Recovery link si halali tena au muda wake umeisha. Omba link mpya.");}
-    });}catch(cause){setError(cause instanceof Error?cause.message:"Supabase haijaunganishwa.");}
+    void (async()=>{
+      try{
+        await Promise.resolve();
+        const {data,error:authError}=await getSupabaseBrowserClient().auth.getUser();
+        if(active){setReady(Boolean(data.user));if(authError)setError("Recovery link si halali tena au muda wake umeisha. Omba link mpya.");}
+      }catch(cause){if(active)setError(cause instanceof Error?cause.message:"Supabase haijaunganishwa.");}
+    })();
     return ()=>{active=false;};
   },[]);
   async function submit(event:FormEvent<HTMLFormElement>){
