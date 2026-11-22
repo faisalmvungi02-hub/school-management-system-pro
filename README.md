@@ -64,6 +64,7 @@ A manual [schema backup workflow](.github/workflows/database-schema-backup.yml) 
 ## Project documentation
 
 - [Database architecture and source of truth](docs/architecture/database-source-of-truth.md)
+- [School role and permission model](docs/architecture/role-permission-model.md)
 - [Database recovery runbook](docs/operations/database-recovery.md)
 - [Payment gateway setup](docs/operations/platform-payment-gateway-setup.md)
 - [Phase 2 — School Onboarding](docs/implementation/phase-2-school-onboarding.md)
