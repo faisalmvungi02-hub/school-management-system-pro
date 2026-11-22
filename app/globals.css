@@ -53,3 +53,45 @@ h2 { font-size:18px; margin:6px 0; }
 .primary-button { background:#eee; color:#111; border-color:#eee; }
 @media(max-width:850px) { .dashboard-shell { grid-template-columns:1fr; } .sidebar { min-height:auto; } .stats-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 @media(max-width:560px) { .dashboard-app { padding:12px; } .content-grid,.settings-grid { grid-template-columns:1fr; } .span-2 { grid-column:auto; } .topbar,.settings-header { align-items:flex-start; flex-direction:column; } .stats-grid { gap:8px; } }
+
+
+.auth-page { min-height:100vh; display:grid; place-items:center; padding:24px; background:#101010; }
+.auth-card { width:min(100%,520px); padding:clamp(24px,5vw,42px); border:1px solid #3a3a3a; border-radius:22px; background:rgba(255,255,255,.035); box-shadow:0 24px 70px rgba(0,0,0,.28); }
+.auth-brand { display:inline-block; color:#fff; font-weight:700; letter-spacing:.08em; text-decoration:none; }
+.auth-kicker { color:#929292; font-size:11px; letter-spacing:2px; margin:28px 0 10px; }
+.auth-card h1 { font-size:clamp(28px,5vw,40px); letter-spacing:-1.2px; margin:8px 0 12px; }
+.auth-copy { color:#aaa; font-size:14px; line-height:1.75; margin:0 0 26px; }
+.auth-form { display:grid; gap:16px; }
+.auth-form label { display:grid; gap:8px; color:#ccc; font-size:13px; }
+.auth-form input { width:100%; padding:13px 14px; border:1px solid #414141; border-radius:10px; background:#171717; color:#fff; outline:none; }
+.auth-form input:focus { border-color:#aaa; }
+.auth-primary,.auth-secondary { display:inline-flex; justify-content:center; align-items:center; gap:8px; padding:13px 16px; border:1px solid #eee; border-radius:10px; background:#eee; color:#111; font-weight:700; text-decoration:none; }
+.auth-primary:disabled { opacity:.6; cursor:wait; }
+.auth-secondary { border-color:#555; background:transparent; color:#eee; }
+.auth-button-link { min-height:44px; }
+.auth-inline { display:flex; justify-content:flex-end; font-size:12px; color:#bbb; }
+.auth-foot { margin:22px 0 0; color:#999; font-size:13px; }
+.auth-foot a,.auth-inline a { color:#eee; }
+.auth-error,.auth-success { margin-top:18px; padding:12px; border:1px solid #555; border-radius:10px; font-size:13px; line-height:1.6; }
+.auth-error { border-color:#744; color:#ffd0d0; }
+.auth-success { color:#eee; }
+.workspace-page { min-height:100vh; background:#101010; padding:24px; }
+.workspace-top { max-width:1400px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; gap:16px; padding:12px 0 22px; border-bottom:1px solid #333; }
+.workspace-user { display:flex; align-items:center; gap:14px; color:#aaa; font-size:13px; }
+.workspace-wrap { max-width:1400px; margin:36px auto; }
+.workspace-wrap h1 { font-size:clamp(28px,4vw,42px); letter-spacing:-1px; }
+.workspace-grid { display:grid; grid-template-columns:minmax(240px,330px) minmax(0,1fr); gap:16px; margin-top:24px; }
+.workspace-list,.workspace-detail,.workspace-empty { border:1px solid #383838; border-radius:16px; background:rgba(255,255,255,.035); padding:20px; }
+.workspace-list h2,.workspace-detail h2,.workspace-empty h2 { margin:0 0 16px; }
+.workspace-choice { display:grid; width:100%; gap:7px; text-align:left; margin-top:10px; padding:14px; border:1px solid #444; border-radius:11px; background:transparent; color:#eee; }
+.workspace-choice.selected { border-color:#ddd; background:rgba(255,255,255,.08); }
+.workspace-choice span,.workspace-choice small,.workspace-muted { color:#999; font-size:12px; line-height:1.6; }
+.workspace-empty { margin-top:22px; }
+.workspace-label { color:#999; font-size:11px; letter-spacing:2px; }
+.workspace-detail h3 { margin:26px 0 12px; font-size:14px; }
+.workspace-tags,.permission-grid { display:flex; flex-wrap:wrap; gap:8px; }
+.workspace-tags span,.permission-grid code { padding:8px 10px; border:1px solid #444; border-radius:8px; color:#ddd; font-size:12px; }
+.permission-grid code { background:rgba(255,255,255,.025); }
+.workspace-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; }
+.workspace-links { display:flex; flex-wrap:wrap; gap:18px; margin-top:26px; color:#bbb; font-size:13px; }
+@media(max-width:760px){.workspace-grid{grid-template-columns:1fr}.workspace-top{align-items:flex-start;flex-direction:column}.workspace-page{padding:16px}}
