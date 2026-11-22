@@ -1,0 +1,10 @@
+project_id = "plus-os"
+
+[functions.selcom-gateway]
+verify_jwt = false
+
+[functions.snippe-gateway]
+verify_jwt = false
+
+[functions.platform-gateway-credentials]
+verify_jwt = false
