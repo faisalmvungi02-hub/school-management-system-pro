@@ -45,8 +45,13 @@ export default function PlatformPaymentGatewaysPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [sessionReady, setSessionReady] = useState(false);
+  const [testing, setTesting] = useState<"selcom" | "snippe" | null>(null);
+  const [testResults, setTestResults] = useState<Partial<Record<"selcom" | "snippe", { ok: boolean; message: string; details?: string }>>>({});
 
-  const invoke = useCallback(async (method: "GET" | "POST", credentials?: Partial<Record<CredentialKey, string>>) => {
+  const invoke = useCallback(async (
+    method: "GET" | "POST",
+    payload?: { credentials?: Partial<Record<CredentialKey, string>>; action?: "test"; provider?: "selcom" | "snippe" }
+  ) => {
     if (!client) throw new Error("Supabase public environment variables are missing.");
     const { data } = await client.auth.getSession();
     const token = data.session?.access_token;
@@ -56,7 +61,7 @@ export default function PlatformPaymentGatewaysPage() {
       {
         method,
         headers: { Authorization: `Bearer ${token}`, apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? "", "Content-Type": "application/json" },
-        body: method === "POST" ? JSON.stringify({ credentials }) : undefined,
+        body: method === "POST" ? JSON.stringify(payload ?? {}) : undefined,
         cache: "no-store",
       }
     );
@@ -94,13 +99,34 @@ export default function PlatformPaymentGatewaysPage() {
       return;
     }
     try {
-      const result = await invoke("POST", credentials);
+      const result = await invoke("POST", { credentials });
       setValues({});
+      setTestResults({});
       setMessage(result.message ?? "Credentials zimehifadhiwa salama.");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Imeshindikana kuhifadhi credentials.");
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function testProvider(provider: "selcom" | "snippe") {
+    setTesting(provider);
+    setError("");
+    setMessage("");
+    setTestResults((current) => ({ ...current, [provider]: undefined }));
+    try {
+      const response = await invoke("POST", { action: "test", provider });
+      const result = response.result as { ok: boolean; message: string; details?: string };
+      setTestResults((current) => ({ ...current, [provider]: result }));
+      if (result.ok) setMessage(result.message);
+      else setError(result.message);
+    } catch (cause) {
+      const message = cause instanceof Error ? cause.message : "Jaribio la gateway halikufanikiwa.";
+      setError(message);
+      setTestResults((current) => ({ ...current, [provider]: { ok: false, message } }));
+    } finally {
+      setTesting(null);
     }
   }
 
@@ -131,6 +157,24 @@ export default function PlatformPaymentGatewaysPage() {
             />
           </label>
         ))}
+      </div>
+      <div style={{ marginTop: 18, paddingTop: 15, borderTop: "1px solid rgba(255,255,255,.12)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+        <div style={{ minWidth: 0, flex: 1 }}>
+          {testResults[provider] && (
+            <div role="status" style={{ color: testResults[provider]?.ok ? "#d8f0dc" : "#ffd4d4", fontSize: 12, lineHeight: 1.6 }}>
+              {testResults[provider]?.message}
+              {testResults[provider]?.details && <div style={{ color: "#aaa", marginTop: 3 }}>{testResults[provider]?.details}</div>}
+            </div>
+          )}
+        </div>
+        <button
+          type="button"
+          disabled={!status?.[provider] || testing !== null}
+          onClick={() => void testProvider(provider)}
+          style={{ border: "1px solid #777", borderRadius: 9, padding: "10px 14px", background: "rgba(255,255,255,.07)", color: "#eee", fontSize: 12, cursor: !status?.[provider] || testing !== null ? "not-allowed" : "pointer", opacity: !status?.[provider] || testing !== null ? .45 : 1 }}
+        >
+          {testing === provider ? "Inapima..." : "Test connection"}
+        </button>
       </div>
     </section>
   );
