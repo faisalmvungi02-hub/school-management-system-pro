@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties, FormEvent } from "react";
 import Link from "next/link";
 import { createClient, type User } from "@supabase/supabase-js";
@@ -38,6 +38,20 @@ export default function SchoolOnboardingPage() {
     if (queryError) throw queryError;
     setMemberships((data ?? []) as unknown as Membership[]);
   }
+
+  useEffect(() => {
+    let active = true;
+    if (supabase) void supabase.auth.getUser().then(async ({ data, error: authError }) => {
+      if (!active || authError || !data.user) return;
+      setUser(data.user);
+      try {
+        const { data: rows, error: queryError } = await supabase.from("school_memberships").select("school_id,status,schools(id,name,slug,status)").eq("user_id", data.user.id).order("created_at", { ascending: false });
+        if (queryError) throw queryError;
+        if (active) setMemberships((rows ?? []) as unknown as Membership[]);
+      } catch (cause) { if (active) setError(cause instanceof Error ? cause.message : "Imeshindwa kupakia shule zako."); }
+    });
+    return () => { active = false; };
+  }, [supabase]);
 
   async function signIn(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
