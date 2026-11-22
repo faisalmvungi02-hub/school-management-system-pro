@@ -132,7 +132,12 @@ export default function PlatformPaymentGatewaysPage() {
     }
   }
 
-  const providerCard = (provider: "selcom" | "snippe", title: string, subtitle: string) => (
+  const providerCard = (provider: "selcom" | "snippe", title: string, subtitle: string) => {
+    const hasUnsavedCredentials = fields.some(
+      (field) => field.provider === provider && Boolean(values[field.key]?.trim())
+    );
+
+    return (
     <section style={cardStyle}>
       <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
         <div>
@@ -171,15 +176,16 @@ export default function PlatformPaymentGatewaysPage() {
         </div>
         <button
           type="button"
-          disabled={!status?.[provider] || testing !== null}
+          disabled={!status?.[provider] || testing !== null || hasUnsavedCredentials}
           onClick={() => void testProvider(provider)}
-          style={{ border: "1px solid #777", borderRadius: 9, padding: "10px 14px", background: "rgba(255,255,255,.07)", color: "#eee", fontSize: 12, cursor: !status?.[provider] || testing !== null ? "not-allowed" : "pointer", opacity: !status?.[provider] || testing !== null ? .45 : 1 }}
+          style={{ border: "1px solid #777", borderRadius: 9, padding: "10px 14px", background: "rgba(255,255,255,.07)", color: "#eee", fontSize: 12, cursor: !status?.[provider] || testing !== null || hasUnsavedCredentials ? "not-allowed" : "pointer", opacity: !status?.[provider] || testing !== null || hasUnsavedCredentials ? .45 : 1 }}
         >
-          {testing === provider ? "Inapima..." : "Test connection"}
+          {testing === provider ? "Inapima..." : hasUnsavedCredentials ? "Save changes first" : "Test connection"}
         </button>
       </div>
     </section>
-  );
+    );
+  };
 
   return (
     <main style={{ minHeight: "100vh", background: "#101010", color: "#f7f7f7", padding: "clamp(20px,4vw,54px)", fontFamily: "Arial, sans-serif" }}>
