@@ -72,6 +72,8 @@ export default function AcceptSchoolInvitationPage() {
           <label style={label}>Invitation token<textarea required minLength={32} rows={4} value={token} onChange={e=>setToken(e.target.value)} style={{...field,resize:"vertical"}} placeholder="Bandika token kamili ya mwaliko hapa"/></label>
           <button type="submit" disabled={busy} style={primary}>{busy?"Inathibitisha invitation...":signedIn?"Kubali mwaliko":"Ingia na ukubali mwaliko"}</button>
         </form>
+        {!signedIn && token.length>=32 && <p style={small}>Huna akaunti bado? <Link href={"/register#"+encodeURIComponent(token)} style={link}>Jisajili kwa kutumia mwaliko huu</Link>. Baada ya kuthibitisha email, utarudishwa hapa kukamilisha kujiunga na shule.</p>}
+        {!signedIn && token.length>=32 && <p style={small}>Tayari una akaunti? <Link href={"/login?next="+encodeURIComponent("/school/invitations/accept#"+token)} style={link}>Ingia kwanza</Link>, kisha rudi kwenye mwaliko.</p>}
         {message&&<p role="status" style={success}>{message}</p>}
         {error&&<p role="alert" style={danger}>{error}</p>}
         <p style={small}>Mialiko iliyokwisha muda wake, iliyotumika, iliyofutwa au iliyotumwa kwa email tofauti itakataliwa na database.</p>
