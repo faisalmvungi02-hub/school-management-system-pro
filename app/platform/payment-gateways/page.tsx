@@ -69,7 +69,7 @@ export default function PlatformPaymentGatewaysPage() {
     );
     const result = await response.json();
     if (!response.ok) throw new Error(result.error ?? "Ombi halijafanikiwa.");
-    setStatus(result.configured ?? null);
+    if (result.configured) setStatus(result.configured);
     return result;
   }, [client]);
 
