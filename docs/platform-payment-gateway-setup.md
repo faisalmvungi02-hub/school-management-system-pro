@@ -6,7 +6,7 @@ The Platform Administration credential screen is available at:
 `/platform/payment-gateways`
 
 ## Frontend environment
-The frontend is a Next.js 16 application. Use Node.js 20.9 or newer (CI is set to Node.js 24). Configure these variables in the frontend deployment environment:
+The frontend uses Next.js 16 and ESLint 10. Use Node.js 24 or newer. The repository pins the development major in `.nvmrc`, declares the minimum in `package.json`, and CI runs on Node.js 24. Configure these variables in the frontend deployment environment:
 
 - `NEXT_PUBLIC_SUPABASE_URL=https://pfpjlenbhajynfgrdltd.supabase.co`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY=<project anon key>` or `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<project publishable key>`
