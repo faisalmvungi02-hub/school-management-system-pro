@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { CSSProperties, FormEvent } from "react";
 import { createClient } from "@supabase/supabase-js";
@@ -36,6 +36,7 @@ const cardStyle: CSSProperties = {
 };
 
 export default function PlatformPaymentGatewaysPage() {
+  const router = useRouter();
   const client = useMemo<SupabaseClient | null>(() => {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
@@ -77,17 +78,22 @@ export default function PlatformPaymentGatewaysPage() {
     let alive = true;
     (async () => {
       try {
-        if (client) {
-          await invoke("GET");
+        if (!client) throw new Error("Supabase public environment variables are missing.");
+        const { data, error: userError } = await client.auth.getUser();
+        if (userError || !data.user || data.user.app_metadata?.platform_admin !== true) {
+          await client.auth.signOut();
+          router.replace("/platform/login");
+          return;
         }
+        await invoke("GET");
       } catch (e) {
-        if (alive) setError(e instanceof Error ? e.message : "Imeshindikana kusoma hali ya gateways.");
+        if (alive) setError(e instanceof Error ? e.message : "Imeshindikana kuthibitisha akaunti ya administrator.");
       } finally {
         if (alive) setSessionReady(true);
       }
     })();
     return () => { alive = false; };
-  }, [client, invoke]);
+  }, [client, invoke, router]);
 
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -223,7 +229,7 @@ export default function PlatformPaymentGatewaysPage() {
 
           <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, flexWrap: "wrap" }}>
             <button type="button" onClick={() => { setValues({}); setError(""); setMessage(""); }} style={{ border: "1px solid #555", background: "transparent", color: "#ddd", borderRadius: 10, padding: "12px 17px", cursor: "pointer" }}>Clear form</button>
-            <button type="submit" disabled={busy} style={{ border: "1px solid #eee", background: "#eee", color: "#111", borderRadius: 10, padding: "12px 20px", fontWeight: 700, cursor: busy ? "wait" : "pointer", opacity: busy ? .65 : 1 }}>
+            <button type="submit" disabled={busy || !sessionReady || !status} style={{ border: "1px solid #eee", background: "#eee", color: "#111", borderRadius: 10, padding: "12px 20px", fontWeight: 700, cursor: busy ? "wait" : "pointer", opacity: busy || !sessionReady || !status ? .65 : 1 }}>
               {busy ? "Inahifadhi..." : "Save credentials securely"}
             </button>
           </div>
