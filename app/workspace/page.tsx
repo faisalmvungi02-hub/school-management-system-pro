@@ -27,6 +27,7 @@ export default function WorkspacePage(){
         const supabase=getSupabaseBrowserClient();
         const {data:{user},error:userError}=await supabase.auth.getUser();
         if(userError||!user){router.replace("/login?next=/workspace");return;}
+        if(user.app_metadata?.platform_admin===true){router.replace("/platform/payment-gateways");return;}
         if(!alive)return;
         setEmail(user.email??"");
         const {data:memberships,error:membershipError}=await supabase.from("school_memberships").select("id,school_id,status").eq("user_id",user.id).eq("status","active");
