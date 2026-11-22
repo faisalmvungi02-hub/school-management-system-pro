@@ -8,16 +8,20 @@ export default function ConfirmedPage(){
   const [status,setStatus]=useState("Inathibitisha session yako...");
   useEffect(()=>{
     let active=true;
-    try{
-      const supabase=getSupabaseBrowserClient();
-      const {data:{subscription}}=supabase.auth.onAuthStateChange((_event,session)=>{
-        if(active&&session)setStatus("Email imethibitishwa. Utambulisho wako umepokelewa na PLUS OS.");
-      });
-      void supabase.auth.getUser().then(({data,error})=>{
+    let unsubscribe=()=>{};
+    void (async()=>{
+      try{
+        await Promise.resolve();
+        const supabase=getSupabaseBrowserClient();
+        const {data:{subscription}}=supabase.auth.onAuthStateChange((_event,session)=>{
+          if(active&&session)setStatus("Email imethibitishwa. Utambulisho wako umepokelewa na PLUS OS.");
+        });
+        unsubscribe=()=>subscription.unsubscribe();
+        const {data,error}=await supabase.auth.getUser();
         if(active)setStatus(data.user?"Email imethibitishwa. Utambulisho wako umepokelewa na PLUS OS.":(error?.message??"Hakuna session iliyopatikana. Jaribu kuingia baada ya kuthibitisha email."));
-      });
-      return ()=>{active=false;subscription.unsubscribe();};
-    }catch(cause){setStatus(cause instanceof Error?cause.message:"Imeshindikana kuthibitisha session.");}
+      }catch(cause){if(active)setStatus(cause instanceof Error?cause.message:"Imeshindikana kuthibitisha session.");}
+    })();
+    return ()=>{active=false;unsubscribe();};
   },[]);
   return <main className="auth-page"><section className="auth-card">
     <Link className="auth-brand" href="/">＋ PLUS OS</Link><p className="auth-kicker">EMAIL VERIFICATION</p><h1>Uthibitishaji wa akaunti</h1>
