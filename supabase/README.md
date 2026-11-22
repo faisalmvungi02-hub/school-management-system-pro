@@ -1,20 +1,31 @@
-# PLUS OS Supabase
+# Supabase project assets
 
-Database source-control documentation for PLUS OS.
+This directory contains the tracked database and server-function assets for PLUS OS.
 
-- [migrations/manifest.json](./migrations/manifest.json): exact migration versions and names recorded by the connected production project.
-- [migrations/README.md](./migrations/README.md): safe workflow for future migrations.
+## Directory structure
 
-Historical SQL bodies were not present in GitHub during this synchronization. The manifest is deliberately non-executable and does not fabricate SQL. All future schema changes must be reviewed SQL migration files committed here.
+- `baseline/` — catalog-derived schema snapshot and recovery references.
+- `functions/` — source snapshots of the three deployed Edge Functions.
+- `migrations/` — exact applied migration inventory and safe migration workflow notes.
+- `tests/` — required database acceptance scenarios.
+- `config.toml` — local CLI project configuration and deployed Edge Function JWT verification settings.
 
+## Production source of truth
 
-## Recovery baseline
+The active production project is `pfpjlenbhajynfgrdltd` in `eu-west-1`, PostgreSQL 17. The live database has 43 applied migrations, but the historical SQL bodies were not available in GitHub at synchronization time.
 
-- [Application schema snapshot](./baseline/2026-11-22-application-schema-snapshot.sql)
-- [Baseline scope and restore-validation checklist](./baseline/README.md)
+The migration manifest is not executable SQL. Do not run `supabase db reset` or try to rebuild a new database from the manifest.
 
-The snapshot is catalog-derived and is not restore-verified. Follow the baseline README before using it for recovery.
+## Migration discipline
 
-## School onboarding
+1. Inspect live schema objects and dependencies first.
+2. Create a migration using `supabase migration new <descriptive_name>`.
+3. Review SQL, RLS, grants, function security modes, indexes, triggers and rollback implications.
+4. Test against a disposable Supabase project or branch.
+5. Run database advisors and acceptance tests.
+6. Apply to production only after review and explicit release approval.
+7. Record the applied migration and refresh generated TypeScript database types.
 
-See [Phase 2 implementation and acceptance tests](../docs/phase-2-school-onboarding.md).
+## Edge Functions
+
+Tracked source is under `functions/`. These files represent deployed snapshots captured on 2026-11-22. Runtime secrets are not stored in Git. Check live deployed versions before deploying any source snapshot.

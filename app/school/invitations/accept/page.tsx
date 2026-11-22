@@ -30,8 +30,8 @@ export default function AcceptSchoolInvitationPage() {
   useEffect(() => {
     const incomingToken = window.location.hash.startsWith("#") ? decodeURIComponent(window.location.hash.slice(1)) : "";
     if (incomingToken) {
-      setToken(incomingToken);
       window.history.replaceState({}, "", window.location.pathname);
+      queueMicrotask(() => setToken(incomingToken));
     }
   }, []);
 

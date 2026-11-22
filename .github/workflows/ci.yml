@@ -41,3 +41,21 @@ jobs:
 
       - name: Create production build
         run: npm run build
+
+  edge-functions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Type-check deployed Edge Functions
+        run: |
+          deno check --config=supabase/functions/selcom-gateway/deno.json supabase/functions/selcom-gateway/index.ts
+          deno check --config=supabase/functions/snippe-gateway/deno.json supabase/functions/snippe-gateway/index.ts
+          deno check --config=supabase/functions/platform-gateway-credentials/deno.json supabase/functions/platform-gateway-credentials/index.ts
