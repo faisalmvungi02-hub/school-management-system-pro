@@ -70,7 +70,7 @@ export default function WorkspacePage(){
           roleNames=(namesResult.data??[]) as Role[];
           rolePermissions=(permissionsResult.data??[]) as typeof rolePermissions;
         }
-        const roleMap=new Map(roleNames.map(r=>[r.code,r]));
+        const roleMap=new Map(roleNames.map(r=>[r.code,r] as const));
         const permissionMap=new Map<string,string[]>();
         for(const item of rolePermissions){
           const existing=permissionMap.get(item.role_code)??[];
