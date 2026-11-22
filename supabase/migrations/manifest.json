@@ -1,0 +1,181 @@
+{
+  "project_ref": "pfpjlenbhajynfgrdltd",
+  "generated_at": "2026-11-22",
+  "source": "Supabase migration history (supabase_migrations.schema_migrations)",
+  "count": 43,
+  "note": "Inventory only. Historical SQL bodies were not present in the repository and are not reconstructed. Do not replay this manifest as migrations.",
+  "migrations": [
+    {
+      "version": "20261114160820",
+      "name": "plus_os_core_foundation_v1"
+    },
+    {
+      "version": "20261114165611",
+      "name": "plus_os_private_school_file_storage_v1"
+    },
+    {
+      "version": "20261121141728",
+      "name": "plus_os_database_hardening_v2"
+    },
+    {
+      "version": "20261121141915",
+      "name": "plus_os_assignments_parent_key_prerequisite"
+    },
+    {
+      "version": "20261121141945",
+      "name": "plus_os_school_domain_modules_v1"
+    },
+    {
+      "version": "20261121142005",
+      "name": "plus_os_complete_fk_index_coverage_v1"
+    },
+    {
+      "version": "20261121142035",
+      "name": "plus_os_operations_transport_billing_v1"
+    },
+    {
+      "version": "20261121142056",
+      "name": "plus_os_transport_fk_index_fix_v1"
+    },
+    {
+      "version": "20261122131617",
+      "name": "plus_os_least_privilege_security_hardening_v2"
+    },
+    {
+      "version": "20261122141133",
+      "name": "plus_os_submission_audit_integrity_v1"
+    },
+    {
+      "version": "20261122141152",
+      "name": "plus_os_submission_guard_insert_safety_v1"
+    },
+    {
+      "version": "20261122141342",
+      "name": "plus_os_finance_integrity_workflows_v1"
+    },
+    {
+      "version": "20261122141406",
+      "name": "plus_os_finance_and_submission_guard_refinement_v1"
+    },
+    {
+      "version": "20261122141521",
+      "name": "plus_os_secure_invitation_and_onboarding_v1"
+    },
+    {
+      "version": "20261122141609",
+      "name": "plus_os_invitation_verified_email_guard_v1"
+    },
+    {
+      "version": "20261122141714",
+      "name": "plus_os_remove_redundant_invoice_total_trigger_v1"
+    },
+    {
+      "version": "20261122142039",
+      "name": "plus_os_student_submission_rls_fix_v1"
+    },
+    {
+      "version": "20261122142309",
+      "name": "plus_os_workspace_privacy_and_submission_guard_v2"
+    },
+    {
+      "version": "20261122142326",
+      "name": "plus_os_workspace_private_storage_policies_v1"
+    },
+    {
+      "version": "20261122142432",
+      "name": "plus_os_workspace_rls_recursion_fix_v1"
+    },
+    {
+      "version": "20261122143028",
+      "name": "plus_os_core_assessment_attendance_scope_v1"
+    },
+    {
+      "version": "20261122143118",
+      "name": "plus_os_core_assessment_attendance_refinements_v1"
+    },
+    {
+      "version": "20261122143310",
+      "name": "plus_os_student_parent_scoped_timetable_read_v1"
+    },
+    {
+      "version": "20261122143557",
+      "name": "plus_os_cross_module_integrity_guards_v1"
+    },
+    {
+      "version": "20261122143629",
+      "name": "plus_os_enrollment_history_and_integrity_trigger_refinements_v1"
+    },
+    {
+      "version": "20261122143841",
+      "name": "plus_os_ai_privacy_and_selcom_server_confirmation_v1"
+    },
+    {
+      "version": "20261122152643",
+      "name": "plus_os_selcom_secure_checkout_and_reconciliation_v1"
+    },
+    {
+      "version": "20261122152828",
+      "name": "plus_os_selcom_reconciliation_runtime_prerequisites_v1"
+    },
+    {
+      "version": "20261122152856",
+      "name": "plus_os_selcom_scheduled_reconciliation_v1"
+    },
+    {
+      "version": "20261122152953",
+      "name": "plus_os_selcom_single_open_checkout_per_invoice_v1"
+    },
+    {
+      "version": "20261122153008",
+      "name": "plus_os_selcom_reconciliation_contract_clarification_v1"
+    },
+    {
+      "version": "20261122153030",
+      "name": "plus_os_selcom_checkout_fk_indexes_v1"
+    },
+    {
+      "version": "20261122154104",
+      "name": "plus_os_multi_gateway_settings_and_snippe_ledger_v1"
+    },
+    {
+      "version": "20261122154206",
+      "name": "plus_os_snippe_reconciliation_signature_provenance_v1"
+    },
+    {
+      "version": "20261122154318",
+      "name": "plus_os_snippe_scheduled_reconciliation_v1"
+    },
+    {
+      "version": "20261122154357",
+      "name": "plus_os_gateway_settings_read_rpc_stability_fix_v1"
+    },
+    {
+      "version": "20261122154417",
+      "name": "plus_os_snippe_scheduled_reconciliation_v1"
+    },
+    {
+      "version": "20261122154445",
+      "name": "plus_os_snippe_single_open_checkout_per_invoice_v1"
+    },
+    {
+      "version": "20261122154750",
+      "name": "plus_os_gateway_settings_invoker_rls_security_v1"
+    },
+    {
+      "version": "20261122155004",
+      "name": "plus_os_gateway_settings_direct_update_guard_v1"
+    },
+    {
+      "version": "20261122155056",
+      "name": "plus_os_gateway_provider_switch_audit_v1"
+    },
+    {
+      "version": "20261122160212",
+      "name": "platform_payment_gateway_credentials_vault_manager_v1"
+    },
+    {
+      "version": "20261122164829",
+      "name": "harden_platform_gateway_vault_rpc_v2"
+    }
+  ]
+}
