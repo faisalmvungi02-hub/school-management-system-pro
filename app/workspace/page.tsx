@@ -33,7 +33,7 @@ export default function WorkspacePage(){
         const {data:memberships,error:membershipError}=await supabase.from("school_memberships").select("id,school_id,status").eq("user_id",user.id).eq("status","active");
         if(membershipError)throw membershipError;
         const schoolMemberships=(memberships??[]) as Membership[];
-        const schoolIds=[...new Set(schoolMemberships.map(m=>m.school_id))];
+        const schoolIds=Array.from(new Set(schoolMemberships.map(m=>m.school_id)));
         const membershipIds=schoolMemberships.map(m=>m.id);
         let schoolRows:School[]=[];
         let memberRoles:{membership_id:string;school_id:string;role_code:string}[]=[];
@@ -50,14 +50,14 @@ export default function WorkspacePage(){
         const {data:districtRows,error:districtError}=await supabase.from("district_memberships").select("id,district_id,role_code,status").eq("user_id",user.id).eq("status","active");
         if(districtError)throw districtError;
         const districtMemberships=(districtRows??[]) as DistrictMembership[];
-        const districtIds=[...new Set(districtMemberships.map(m=>m.district_id))];
+        const districtIds=Array.from(new Set(districtMemberships.map(m=>m.district_id)));
         let districts:District[]=[];
         if(districtIds.length){
           const {data,error:districtsError}=await supabase.from("districts").select("id,name,code,region_name").in("id",districtIds);
           if(districtsError)throw districtsError;
           districts=(data??[]) as District[];
         }
-        const allRoleCodes=[...new Set([...memberRoles.map(r=>r.role_code),...districtMemberships.map(r=>r.role_code)])];
+        const allRoleCodes=Array.from(new Set([...memberRoles.map(r=>r.role_code),...districtMemberships.map(r=>r.role_code)]));
         let roleNames:Role[]=[];
         let rolePermissions:{role_code:string;permission_code:string}[]=[];
         if(allRoleCodes.length){
@@ -79,13 +79,13 @@ export default function WorkspacePage(){
         }
         const schoolWorkspaces:Workspace[]=schoolRows.map(school=>{
           const assignments=memberRoles.filter(r=>r.school_id===school.id);
-          const codes=[...new Set(assignments.map(r=>r.role_code))];
-          return {id:school.id,name:school.name,kind:"school",status:school.status,roles:codes.map(c=>roleMap.get(c)).filter((r):r is Role=>Boolean(r)),permissions:[...new Set(codes.flatMap(c=>permissionMap.get(c)??[]))].sort()};
+          const codes=Array.from(new Set(assignments.map(r=>r.role_code)));
+          return {id:school.id,name:school.name,kind:"school",status:school.status,roles:codes.map(c=>roleMap.get(c)).filter((r):r is Role=>Boolean(r)),permissions:Array.from(new Set(codes.flatMap(c=>permissionMap.get(c)??[]))).sort()};
         });
         const districtWorkspaces:Workspace[]=districts.map(district=>{
           const assignments=districtMemberships.filter(r=>r.district_id===district.id);
-          const codes=[...new Set(assignments.map(r=>r.role_code))];
-          return {id:district.id,name:district.name+" · "+district.code,kind:"district",status:"active",roles:codes.map(c=>roleMap.get(c)).filter((r):r is Role=>Boolean(r)),permissions:[...new Set(codes.flatMap(c=>permissionMap.get(c)??[]))].sort()};
+          const codes=Array.from(new Set(assignments.map(r=>r.role_code)));
+          return {id:district.id,name:district.name+" · "+district.code,kind:"district",status:"active",roles:codes.map(c=>roleMap.get(c)).filter((r):r is Role=>Boolean(r)),permissions:Array.from(new Set(codes.flatMap(c=>permissionMap.get(c)??[]))).sort()};
         });
         if(alive){
           const result=[...schoolWorkspaces,...districtWorkspaces];
