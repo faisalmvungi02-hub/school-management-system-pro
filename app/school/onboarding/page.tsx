@@ -121,6 +121,7 @@ export default function SchoolOnboardingPage() {
               <button disabled={busy} style={primary}>{busy ? "Inaunda workspace..." : "Unda school workspace"}</button>
               <p style={small}>Database inaruhusu bootstrap ya shule kwa akaunti isiyo na active school membership. Ikiwa tayari ni mwanachama wa shule, omba School Owner akutumie invitation badala ya kuunda membership ya pili kwa njia hii.</p>
             </form>
+            <Link href="/school/members/invite" style={mutedLink}>Simamia members na utume invitation →</Link>
             <Link href="/school/invitations/accept" style={mutedLink}>Una invitation? Kubali mwaliko wa shule →</Link>
           </div>
         )}
