@@ -1,0 +1,46 @@
+name: PLUS OS Schema Backup
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: plus-os-schema-backup
+  cancel-in-progress: false
+
+jobs:
+  schema-backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Generate Supabase-filtered schema dump
+        env:
+          DATABASE_URL: ${{ secrets.SUPABASE_DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::Add SUPABASE_DATABASE_URL in repository Actions secrets before running this workflow."
+            exit 1
+          fi
+          supabase db dump --db-url "$DATABASE_URL" -f plus-os-schema.sql
+          test -s plus-os-schema.sql
+          sha256sum plus-os-schema.sql > plus-os-schema.sql.sha256
+
+      - name: Upload schema backup artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: plus-os-schema-${{ github.run_id }}
+          path: |
+            plus-os-schema.sql
+            plus-os-schema.sql.sha256
+          retention-days: 14
+          if-no-files-found: error
