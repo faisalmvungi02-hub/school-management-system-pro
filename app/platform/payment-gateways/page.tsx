@@ -48,6 +48,7 @@ export default function PlatformPaymentGatewaysPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [sessionReady, setSessionReady] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState(false);
   const [testing, setTesting] = useState<"selcom" | "snippe" | null>(null);
   const [testResults, setTestResults] = useState<Partial<Record<"selcom" | "snippe", { ok: boolean; message: string; details?: string }>>>({});
 
@@ -85,6 +86,7 @@ export default function PlatformPaymentGatewaysPage() {
           router.replace("/platform/login");
           return;
         }
+        setIsAuthorized(true);
         await invoke("GET");
       } catch (e) {
         if (alive) setError(e instanceof Error ? e.message : "Imeshindikana kuthibitisha akaunti ya administrator.");
@@ -192,6 +194,20 @@ export default function PlatformPaymentGatewaysPage() {
     </section>
     );
   };
+
+  if (!isAuthorized) {
+    return (
+      <main style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: "#101010", color: "#f7f7f7", padding: 24, fontFamily: "Arial, sans-serif" }}>
+        <section style={{ ...cardStyle, width: "min(100%,480px)", textAlign: "center" }}>
+          <h1 style={{ fontSize: 24 }}>Platform Administration</h1>
+          <p style={{ color: "#aaa", lineHeight: 1.7 }}>
+            {!sessionReady ? "Inathibitisha ruhusa za administrator..." : error || "Ingia kwa akaunti yenye ruhusa ya Platform Administrator."}
+          </p>
+          <Link href="/platform/login" style={{ color: "#fff" }}>Nenda kwenye ukurasa wa kuingia</Link>
+        </section>
+      </main>
+    );
+  }
 
   return (
     <main style={{ minHeight: "100vh", background: "#101010", color: "#f7f7f7", padding: "clamp(20px,4vw,54px)", fontFamily: "Arial, sans-serif" }}>
