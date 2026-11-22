@@ -34,7 +34,7 @@ const cardStyle: React.CSSProperties = {
 export default function PlatformPaymentGatewaysPage() {
   const client = useMemo<SupabaseClient | null>(() => {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
     return url && key ? createClient(url, key, { auth: { persistSession: true, autoRefreshToken: true } }) : null;
   }, []);
   const [values, setValues] = useState<Partial<Record<CredentialKey, string>>>({});
@@ -53,7 +53,7 @@ export default function PlatformPaymentGatewaysPage() {
       (process.env.NEXT_PUBLIC_SUPABASE_URL ?? "") + "/functions/v1/platform-gateway-credentials",
       {
         method,
-        headers: { Authorization: `Bearer ${token}`, apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "", "Content-Type": "application/json" },
+        headers: { Authorization: `Bearer ${token}`, apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? "", "Content-Type": "application/json" },
         body: method === "POST" ? JSON.stringify({ credentials }) : undefined,
         cache: "no-store",
       }
