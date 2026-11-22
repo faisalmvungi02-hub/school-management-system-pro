@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import type { CSSProperties, FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@supabase/supabase-js";
 
 export default function PlatformAdminLoginPage() {
@@ -40,7 +41,7 @@ export default function PlatformAdminLoginPage() {
   return (
     <main style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: "#101010", color: "#f4f4f4", padding: 24, fontFamily: "Arial,sans-serif" }}>
       <section style={{ width: "min(100%,440px)", border: "1px solid rgba(255,255,255,.14)", borderRadius: 20, padding: "clamp(24px,5vw,38px)", background: "rgba(255,255,255,.045)", boxShadow: "0 20px 60px rgba(0,0,0,.25)" }}>
-        <a href="/" style={{ color: "#999", fontSize: 13, textDecoration: "none" }}>← PLUS OS</a>
+        <Link href="/" style={{ color: "#999", fontSize: 13, textDecoration: "none" }}>← PLUS OS</Link>
         <div style={{ marginTop: 30, color: "#aaa", textTransform: "uppercase", letterSpacing: 2, fontSize: 11 }}>Restricted access</div>
         <h1 style={{ margin: "10px 0", fontSize: 30, letterSpacing: "-.8px" }}>Platform Administration</h1>
         <p style={{ color: "#aaa", fontSize: 14, lineHeight: 1.6, marginBottom: 26 }}>Ingia kwa akaunti ya Platform Administrator ili kusimamia huduma za malipo na credentials za mfumo.</p>
