@@ -18,7 +18,7 @@ export default function LoginPage() {
       try{
         await Promise.resolve();
         const {data}=await getSupabaseBrowserClient().auth.getUser();
-        if(active&&data.user)router.replace("/workspace");
+        if(active&&data.user)router.replace(data.user.app_metadata?.platform_admin===true?"/platform/payment-gateways":"/workspace");
       }catch(cause){if(active)setError(cause instanceof Error?cause.message:"Supabase haijaunganishwa.");}
     })();
     return ()=>{active=false;};
@@ -30,6 +30,7 @@ export default function LoginPage() {
       const {data,error:authError}=await getSupabaseBrowserClient().auth.signInWithPassword({email:email.trim().toLowerCase(),password});
       if(authError)throw authError;
       if(!data.user)throw new Error("Supabase haikurudisha utambulisho wa mtumiaji.");
+      if(data.user.app_metadata?.platform_admin===true){router.replace("/platform/payment-gateways");router.refresh();return;}
       const next=new URLSearchParams(window.location.search).get("next");
       router.replace(next&&next.startsWith("/")&&!next.startsWith("//")?next:"/workspace");
       router.refresh();
