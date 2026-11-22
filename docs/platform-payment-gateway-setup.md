@@ -22,10 +22,9 @@ There is currently no Auth user in this Supabase project, so the initial Platfor
 2. Choose **Add user** and create the account with the owner's intended email and a strong password (or send an invite).
 3. Open the newly created user record.
 4. Edit **App Metadata** (not User Metadata).
-3. Edit **App Metadata** (not User Metadata).
-4. Add the boolean claim `platform_admin: true`.
-5. Save, then sign out and sign in again to refresh the access token.
-6. Open `/platform/payment-gateways`.
+5. Add the boolean claim `platform_admin: true`.
+6. Save, then sign in through `/platform/login` to obtain a fresh access token.
+7. Open `/platform/payment-gateways`.
 
 Only an operator with Supabase project Auth administration access should grant this claim. Do not grant it to school administrators.
 
