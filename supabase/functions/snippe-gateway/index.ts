@@ -118,7 +118,7 @@ async function snippeRequest(cfg: Json, path: string, method: "GET" | "POST", bo
   }
   return result;
 }
-async function getInvoiceBalance(userClient: ReturnType<typeof createClient>, invoiceId: string) {
+async function getInvoiceBalance(userClient: typeof admin, invoiceId: string) {
   return await userClient.rpc("selcom_get_invoice_balance", { p_invoice_id: invoiceId });
 }
 async function checkout(req: Request) {
