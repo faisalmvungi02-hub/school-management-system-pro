@@ -28,7 +28,7 @@ const inputStyle: CSSProperties = {
   padding: "13px 14px", background: "rgba(255,255,255,.035)", color: "#f5f5f5",
   outline: "none", fontSize: 14,
 };
-const cardStyle: React.CSSProperties = {
+const cardStyle: CSSProperties = {
   border: "1px solid rgba(255,255,255,.13)", borderRadius: 18, padding: 22,
   background: "rgba(255,255,255,.045)", boxShadow: "0 16px 42px rgba(0,0,0,.16)",
 };
