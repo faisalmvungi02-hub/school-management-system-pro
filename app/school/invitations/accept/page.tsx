@@ -20,8 +20,11 @@ export default function AcceptSchoolInvitationPage() {
   const [error,setError]=useState("");
 
   useEffect(() => {
-    const incomingToken = new URLSearchParams(window.location.search).get("token");
-    if (incomingToken) setToken(incomingToken);
+    const incomingToken = window.location.hash.startsWith("#") ? decodeURIComponent(window.location.hash.slice(1)) : "";
+    if (incomingToken) {
+      setToken(incomingToken);
+      window.history.replaceState({}, "", window.location.pathname);
+    }
   }, []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
