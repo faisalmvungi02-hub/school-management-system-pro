@@ -16,15 +16,17 @@ Never put the Supabase service-role key in any `NEXT_PUBLIC_*` variable or brows
 ## Authorize the first Platform Administrator
 The Edge Function verifies the signed-in user's server-controlled Auth `app_metadata.platform_admin` claim. It does not trust user-editable `user_metadata`.
 
-There is currently no Auth user in this Supabase project, so the initial Platform Administrator account must be created first:
+If the intended Platform Administrator account does not exist yet:
 
 1. Open Supabase Dashboard → Authentication → Users.
 2. Choose **Add user** and create the account with the owner's intended email and a strong password (or send an invite).
-3. Open the newly created user record.
+3. Open that user record. If the account already exists, select the exact account instead.
 4. Edit **App Metadata** (not User Metadata).
 5. Add the boolean claim `platform_admin: true`.
 6. Save, then sign in through `/platform/login` to obtain a fresh access token.
 7. Open `/platform/payment-gateways`.
+
+A confirmed Platform Administrator account with the required app metadata is now present in this project. Do not create a second administrator unless another person needs separate access.
 
 Only an operator with Supabase project Auth administration access should grant this claim. Do not grant it to school administrators.
 
@@ -60,3 +62,4 @@ GitHub Actions runs ESLint, TypeScript type-checking and a Next.js production bu
 - Database RPC execution is restricted to `service_role`.
 - Edge Function requires a valid Supabase user session and server-controlled `app_metadata.platform_admin === true`.
 - Never send provider keys through chat, email, source code, frontend environment variables, or client logs.
+- The Supabase Security Advisor currently warns that leaked-password protection is disabled. Review Authentication → Password Security and enable it if the Supabase plan supports it. Supabase documents that leaked-password protection is available on Pro and above: https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection.
