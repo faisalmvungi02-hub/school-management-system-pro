@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { getSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 export default function LoginPage() {
-  const router = useRouter();
+  const router=useRouter();
   const [email,setEmail]=useState("");
   const [password,setPassword]=useState("");
   const [busy,setBusy]=useState(false);
@@ -14,8 +14,13 @@ export default function LoginPage() {
 
   useEffect(()=>{
     let active=true;
-    try { void getSupabaseBrowserClient().auth.getUser().then(({data})=>{if(active&&data.user)router.replace("/workspace");}); }
-    catch(cause){if(active)setError(cause instanceof Error?cause.message:"Supabase haijaunganishwa.");}
+    void (async()=>{
+      try{
+        await Promise.resolve();
+        const {data}=await getSupabaseBrowserClient().auth.getUser();
+        if(active&&data.user)router.replace("/workspace");
+      }catch(cause){if(active)setError(cause instanceof Error?cause.message:"Supabase haijaunganishwa.");}
+    })();
     return ()=>{active=false;};
   },[router]);
 
