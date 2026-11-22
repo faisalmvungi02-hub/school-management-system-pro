@@ -20,6 +20,14 @@ export default function AcceptSchoolInvitationPage() {
   const [error,setError]=useState("");
 
   useEffect(() => {
+    let active = true;
+    if (supabase) void supabase.auth.getUser().then(({ data, error: authError }) => {
+      if (active && !authError && data.user) setSignedIn(true);
+    });
+    return () => { active = false; };
+  }, [supabase]);
+
+  useEffect(() => {
     const incomingToken = window.location.hash.startsWith("#") ? decodeURIComponent(window.location.hash.slice(1)) : "";
     if (incomingToken) {
       setToken(incomingToken);
