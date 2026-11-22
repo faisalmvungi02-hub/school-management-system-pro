@@ -12,11 +12,6 @@ import {
   type DashboardPreferences,
 } from "@/lib/preferences";
 
-function formatDate(dateString: string) {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric" }).format(date);
-}
-
 function getGreeting() {
   const hour = new Date().getHours();
   if (hour < 12) return "Good morning";
