@@ -12,6 +12,8 @@ import {
   type DashboardPreferences,
 } from "@/lib/preferences";
 
+type DashboardStyle = CSSProperties & { [key: `--${string}`]: string | number | undefined };
+
 function getGreeting() {
   const hour = new Date().getHours();
   if (hour < 12) return "Good morning";
@@ -50,13 +52,13 @@ export default function StudentDashboardPage() {
     [prefs.glassPreset]
   );
 
-  const shellStyle = {
-    ["--dashboard-bg-image" as any]: `url(${selectedBackground.url})`,
-    ["--glass-opacity" as any]: selectedPreset.opacity,
-    ["--glass-blur" as any]: selectedPreset.blur,
-    ["--glass-border" as any]: selectedPreset.border,
-    ["--glass-shadow" as any]: selectedPreset.shadow,
-  } as CSSProperties;
+  const shellStyle: DashboardStyle = {
+    "--dashboard-bg-image": `url(${selectedBackground.url})`,
+    "--glass-opacity": selectedPreset.opacity,
+    "--glass-blur": selectedPreset.blur,
+    "--glass-border": selectedPreset.border,
+    "--glass-shadow": selectedPreset.shadow,
+  };
 
   // NOTE: This component currently shows limited data until an authentication system is integrated.
   // It reads preferences from the server when available and falls back to localStorage.
@@ -66,7 +68,11 @@ export default function StudentDashboardPage() {
       <div className="dashboard-shell">
         <aside className="sidebar glass-panel">
           <div className="brand-row">
-            <img src="/assets/logo.png" alt="PLUS OS" style={{ width: 120, height: 'auto', objectFit: 'contain' }} />
+            <div className="brand-mark" aria-hidden="true">+</div>
+            <div>
+              <div className="brand-title">PLUS OS</div>
+              <div className="brand-subtitle">Student portal</div>
+            </div>
           </div>
 
           <nav aria-label="Student navigation" className="nav-stack">
