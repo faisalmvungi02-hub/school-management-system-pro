@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import type { CSSProperties, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
 
@@ -65,7 +66,7 @@ export default function PlatformAdminLoginPage() {
   );
 }
 
-const fieldStyle: React.CSSProperties = {
+const fieldStyle: CSSProperties = {
   width: "100%", boxSizing: "border-box", padding: "13px 14px", borderRadius: 10,
   border: "1px solid #414141", color: "#f5f5f5", background: "rgba(255,255,255,.035)",
   fontSize: 14, outline: "none",
