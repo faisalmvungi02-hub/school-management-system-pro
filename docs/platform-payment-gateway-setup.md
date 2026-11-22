@@ -6,7 +6,7 @@ The Platform Administration credential screen is available at:
 `/platform/payment-gateways`
 
 ## Frontend environment
-Set these variables in the frontend deployment environment:
+The frontend is a Next.js 16 application. Use Node.js 20.9 or newer (CI is set to Node.js 24). Configure these variables in the frontend deployment environment:
 
 - `NEXT_PUBLIC_SUPABASE_URL=https://pfpjlenbhajynfgrdltd.supabase.co`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY=<project anon key>` or `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<project publishable key>`
@@ -39,17 +39,20 @@ The screen accepts partial updates: blank fields are left unchanged. Values are 
 
 Each provider card includes a **Test connection** action. It sends a read-only API request; it does not initiate a customer payment, create an order, or send a USSD push.
 
-- Selcom: signs and calls `GET /v1/checkout/order-status` with a dedicated non-payment test order ID. This checks API authentication and endpoint access. It does not create or charge an order, and it does not prove settlement readiness.
-- Snippe: calls `GET /v1/payments?limit=1&offset=0`. The API key must have the `collection:read` scope. This checks API authentication only. The Webhook Signing Secret is stored securely but cannot be proven against the provider using this read-only request.
+- Selcom: signs and calls `GET /v1/checkout/list-orders?fromdate=YYYY-MM-DD&todate=YYYY-MM-DD` for the current date in Tanzania. This checks API authentication and order-list access. It does not create an order, trigger USSD, or charge a customer, and it does not prove settlement readiness.
+- Snippe: calls `GET /v1/payments?limit=1&offset=0`. The API key must have the `collection:read` scope. This checks API authentication and read access only. The Webhook Signing Secret is stored securely but cannot be proven against the provider using this read-only request.
 
 A successful connection test is not a live-payment certification. Confirm the callback/webhook URL in each provider dashboard and perform a controlled test transaction before turning the gateway on for schools.
 
 Provider references:
-- Selcom authentication and order status: https://developers.selcommobile.com/
+- Selcom authentication and list orders: https://developers.selcommobile.com/
 - Snippe authentication and payment endpoints: https://docs.snippe.sh/docs/2026-01-25/authentication and https://docs.snippe.sh/docs/2026-01-25/payments
 
 ## Readiness
 A gateway is marked configured only when all required values are present. This status is not proof of a successful live merchant transaction. Complete provider-side callback/webhook configuration and run a controlled test payment before enabling a gateway for schools.
+
+## Build validation
+GitHub Actions runs ESLint, TypeScript type-checking and a Next.js production build for pushes and pull requests targeting `main`. The CI job uses an ephemeral npm lockfile for that run; no generated lockfile is committed yet.
 
 ## Security
 - Edge Function: `platform-gateway-credentials`
