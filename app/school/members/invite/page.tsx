@@ -71,7 +71,7 @@ export default function InviteSchoolMemberPage() {
       });
       if(insertError)throw insertError;
       const url=new URL("/school/invitations/accept",window.location.origin);
-      url.searchParams.set("token",token);
+      url.hash=token;
       setInviteUrl(url.toString());
       setInviteEmail("");
       setMessage("Mwaliko umetengenezwa na token hash pekee ndiyo iliyohifadhiwa kwenye database. Nakili link hii na umtumie mtu husika kupitia njia salama.");
