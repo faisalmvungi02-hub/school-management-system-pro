@@ -54,7 +54,7 @@ export default function WorkspacePage(){
         if(districtIds.length){
           const {data,error:districtsError}=await supabase.from("districts").select("id,name,code,region_name").in("id",districtIds);
           if(districtsError)throw districtsError;
-          districts=(districts??[]) as District[];
+          districts=(data??[]) as District[];
         }
         const allRoleCodes=[...new Set([...memberRoles.map(r=>r.role_code),...districtMemberships.map(r=>r.role_code)])];
         let roleNames:Role[]=[];
