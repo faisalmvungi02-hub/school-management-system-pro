@@ -102,3 +102,8 @@ export function persistPreferences(preferences: DashboardPreferences) {
 
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));
 }
+
+/** Server preference sync is not connected yet; the dashboard safely falls back to local preferences. */
+export async function fetchPreferencesFromServer(): Promise<DashboardPreferences | null> {
+  return null;
+}
