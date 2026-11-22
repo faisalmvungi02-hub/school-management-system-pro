@@ -56,6 +56,6 @@ jobs:
 
       - name: Type-check deployed Edge Functions
         run: |
-          deno check supabase/functions/selcom-gateway/index.ts
-          deno check supabase/functions/snippe-gateway/index.ts
-          deno check supabase/functions/platform-gateway-credentials/index.ts
+          deno check --config=supabase/functions/selcom-gateway/deno.json supabase/functions/selcom-gateway/index.ts
+          deno check --config=supabase/functions/snippe-gateway/deno.json supabase/functions/snippe-gateway/index.ts
+          deno check --config=supabase/functions/platform-gateway-credentials/deno.json supabase/functions/platform-gateway-credentials/index.ts
