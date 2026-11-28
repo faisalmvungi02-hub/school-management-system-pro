@@ -45,6 +45,12 @@ This is an evidence-based audit. PASS is used only where directly verified. NOT 
 - The schema-backup workflow exists and is manual (`workflow_dispatch`); its successful execution and artifact are NOT VERIFIED. It requires the GitHub Actions secret `SUPABASE_DATABASE_URL`.
 - The current CI workflow type-checks the three tracked Edge Function sources; GitHub reports both CI jobs successful for this PR commit.
 
+## Additional security review
+- A fresh policy review found five policies with literal `true`: three authenticated SELECT policies on the global `permissions`, `role_permissions`, and `roles` reference tables, plus service-role-only ALL policies on the Selcom and legacy Snippe checkout-intent tables. These are not anonymous data-access grants.
+- A fresh SECURITY DEFINER inventory found functions consistently configured with an empty search_path. The two functions that report EXECUTE to anon are trigger-returning functions attached to triggers; they cannot be invoked as ordinary RPC functions. The school bootstrap and invitation functions are callable by authenticated users and include `auth.uid()` and membership/token/email checks in their definitions.
+- The payment schema has explicit UNIQUE guards for provider event IDs and Selcom order/merchant transaction IDs and client idempotency keys. These are structural safeguards, not a substitute for duplicate webhook/retry acceptance tests.
+- Legacy Snippe database objects/functions still exist alongside Selcom. They were not removed because dropping them without a full dependency and historical-data review would be unsafe; reconcile this legacy footprint against the current Selcom-only product decision before a future cleanup migration.
+
 ## Safe action completed
 - Ran `ANALYZE;` on the live database. No schema or user rows were changed.
 - Executed only read-only SQL checks during this follow-up audit.
