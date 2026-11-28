@@ -8,9 +8,9 @@ This is an evidence-based audit. PASS is used only where directly verified. NOT 
 
 ## Verified production facts
 - 43 migrations are recorded in the live Supabase migration history.
-- 73 public application tables were returned by the live catalog check; all 75 public/private application tables inspected had RLS enabled.
-- 189 RLS policies were counted in the inspected application schemas.
-- 164 unique indexes were counted.
+- 73 public application tables and 2 private application tables were returned by the live catalog check; all 75 inspected tables have RLS enabled.
+- 189 RLS policies were counted: 186 public and 3 private.
+- 164 unique indexes were counted in the initial index inventory; a fresh constraint-only query found 77 public UNIQUE constraints. These are different catalog measurements and should not be conflated.
 - `pg_stat_statements` 1.11, `pg_cron` 1.6.4, `pg_net` 0.20.4 and Vault are installed.
 - PgBouncer logs show backend connections being opened and TLS 1.3 established through the pooler.
 - Two scheduled payment reconciliation jobs are present.
@@ -38,15 +38,24 @@ This is an evidence-based audit. PASS is used only where directly verified. NOT 
 | Backup restore | NOT VERIFIED | A catalog-derived schema snapshot exists, but is not a canonical dump and has not been restored. |
 | Migration reproducibility | FAIL | The live database has 43 historical migration records; repository has the manifest and schema snapshot, not the original executable SQL bodies. |
 
+## Validation completed
+- GitHub Actions PR checks for commit `6ecf4620778a3b1b385df2777bcf3829f46daf53`: `validate` PASS and `edge-functions` PASS.
+- Fresh read-only SQL verification: 75/75 application tables have RLS enabled; 189 policies were returned (186 public, 3 private).
+- Supabase development branch creation was attempted only after the user's hourly-cost approval. Supabase rejected it with `Branching is supported only on the Pro plan or above`. No test branch was created and no branch-hourly charge started. The branch list contains only the production `main` branch.
+- The schema-backup workflow exists and is manual (`workflow_dispatch`); its successful execution and artifact are NOT VERIFIED. It requires the GitHub Actions secret `SUPABASE_DATABASE_URL`.
+- The current CI workflow type-checks the three tracked Edge Function sources; GitHub reports both CI jobs successful for this PR commit.
+
 ## Safe action completed
 - Ran `ANALYZE;` on the live database. No schema or user rows were changed.
+- Executed only read-only SQL checks during this follow-up audit.
 - No indexes were dropped.
 - No partitioning was introduced because the current data volume does not justify it.
 - No production credentials, secrets, or student/financial data were exported.
+- No paid Supabase branch was left running.
 
 ## Required release gates
-1. Create a Supabase development branch (hourly charge applies), restore/validate a canonical schema dump, and run acceptance tests there.
-2. Add `SUPABASE_DATABASE_URL` as a GitHub Actions secret; run the existing schema-backup workflow and verify its artifact/checksum.
+1. A disposable Supabase database/branch is still required for restore and write-path acceptance tests. Branching is blocked on the current Supabase plan; do not upgrade or incur additional cost without approval.
+2. Add `SUPABASE_DATABASE_URL` as a GitHub Actions secret; manually run the existing schema-backup workflow and verify its artifact/checksum.
 3. Export a canonical Supabase-filtered schema dump using the Supabase CLI. Keep it as a restricted artifact, not in the public repository.
 4. Recover the historical SQL migration bodies from the original trusted source if available. Do not fabricate SQL from names or treat the catalog snapshot as the original migration history.
 5. Add and test app-layer caching and rate limiting in the API/Edge Functions; introduce a queue only with a real worker and retry/dead-letter handling.
